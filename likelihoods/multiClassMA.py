@@ -315,21 +315,78 @@ class MultiClassMA(Likelihood):
     #     return mean_pred, var_pred
 
     def predictive(self, m, v,Y_metadata=None):
-        # This can be checked in eq 4.152 Pattern recognition Bishop
-        # with lambda = 1
-        #mean_pred = std_norm_cdf(m / np.sqrt(1 + v))  #Here the mean prediction is already influenced by the variance v
         
-        # a = m/np.sqrt(1 + np.pi*v/8)
-        _, Nf = m.shape
+        # The functions related to the classification scheme 
+        N, Nf = m.shape
         mean_pred = []
         var_pred = []
         auxm = m[:,:self.K]
         auxv = v[:,:self.K]
-        mean_pred.append(auxm)
-        var_pred.append(auxv)
+        
+        # gh: Gaussian-Hermite quadrature
+        gh_f, gh_w = self._gh_points()
+
+        expanded_F_tuples = []
+        grid_tuple = [auxm.shape[0]]
+        for k in range(self.K):
+            grid_tuple.append(gh_f.shape[0])
+            expanded_fd_tuple = [1]*(self.K+1)
+            expanded_fd_tuple[k+1] = gh_f.shape[0]
+            expanded_F_tuples.append(tuple(expanded_fd_tuple))
+            
+        # mean-variance tuple
+        mv_tuple = [1]*(self.K+1)
+        mv_tuple[0] = auxm.shape[0]
+        mv_tuple = tuple(mv_tuple)
+        
+        # building, normalizing and reshaping the grids
+        F = np.zeros((reduce(lambda x, y: x * y, grid_tuple),self.K))
+        for d in range(self.K):
+            fd = np.zeros(tuple(grid_tuple))
+            fd[:] = np.reshape(gh_f, expanded_F_tuples[d])*np.sqrt(2*np.reshape(auxv[:,d],mv_tuple)) \
+                    + np.reshape(auxm[:,d],mv_tuple)
+            F[:,d,None] = fd.reshape(reduce(lambda x, y: x * y, grid_tuple), -1, order='C')
+            
+        # mean
+        S_f = self.softmax(F)
+        E_S_fk = np.zeros((N,self.K))
+        for k in range(self.K):
+            S_fk = S_f[:,k].reshape(tuple(grid_tuple))
+            E_S_fk1 = S_fk.dot(gh_w) / np.sqrt(np.pi)
+            for kl in range(self.K-1):
+                E_S_fk1 = E_S_fk1.dot(gh_w) / np.sqrt(np.pi)
+            E_S_fk[:,k] = E_S_fk1
+        mean_pred.append(E_S_fk)
+        
+        # variance
+        S_f_2 = S_f**2
+        V_S_fk = np.zeros((N,self.K))
+        for k in range(self.K):
+            V_fk = S_f_2[:,k].reshape(tuple(grid_tuple))
+            V_S_fk1 = V_fk.dot(gh_w) / np.sqrt(np.pi)
+            for kl in range(self.K-1):
+                V_S_fk1 = V_S_fk1.dot(gh_w) / np.sqrt(np.pi)
+            V_S_fk[:,k] = V_S_fk1 - E_S_fk[:,k]**2
+        var_pred.append(V_S_fk)
+        
+        #The mean and variance for the annotators parameters
+        gh_w = gh_w / np.sqrt(np.pi)
         for nf in range(Nf-self.K):
-            mean_pred.append(m[:,nf+self.K,None])
-            var_pred.append(v[:,nf+self.K,None])
+                        
+            auxm = m[:,nf+self.K,None]
+            auxv = v[:,nf+self.K,None]
+            x = gh_f[None, :] * np.sqrt(2. * auxv) + auxm
+            
+            # The mean function 
+            sig_fj_1 = self.logisticFunc(x)
+            m_sig_fj = sig_fj_1.dot(gh_w[:,None])
+            mean_pred.append(m_sig_fj)
+            
+            #The variance function
+            sig_fj_2 = sig_fj_1**2
+            sig_fj_2 = sig_fj_2.dot(gh_w[:,None])
+            v_sig_fj = sig_fj_2 - m_sig_fj**2
+            var_pred.append(v_sig_fj)
         return mean_pred, var_pred                    #of the prediciton, so with don't need any confidence variance
 
     def log_predictive(self, Ytest, mu_F_star, v_F_star, num_samples):

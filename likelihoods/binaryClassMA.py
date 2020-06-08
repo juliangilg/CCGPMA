@@ -225,20 +225,31 @@ class BinaryClassMA(Likelihood):
     def predictive(self, m, v,Y_metadata=None):
         # This can be checked in eq 4.152 Pattern recognition Bishop
         # with lambda = 1
-        #mean_pred = std_norm_cdf(m / np.sqrt(1 + v))  #Here the mean prediction is already influenced by the variance v
         
-        # a = m/np.sqrt(1 + np.pi*v/8)
-        _, R = m.shape
+        #for the Gauss-Hermite approximation
+        gh_f, gh_w = self._gh_points()
+        gh_w = gh_w / np.sqrt(np.pi)
+        
+        
+        _, J = m.shape
         mean_pred = []
         var_pred = []
-        mean_pred.append(m[:,0,None])
-        var_pred.append(v[:,0,None])
-        for r in range(R-1):
-            auxm = m[:,r+1,None]
-            auxv = v[:,r+1,None]
-            mean_pred.append(auxm)
-            var_pred.append(auxv)
-        return mean_pred, var_pred                    #of the prediciton, so with don't need any confidence variance
+        for r in range(J):
+            auxm = m[:,r:r+1,None]
+            auxv = v[:,r:r+1,None]
+            x = gh_f[None, :] * np.sqrt(2. * auxv) + auxm
+            
+            # The mean function 
+            sig_fj_1 = self.logisticFunc(x)
+            m_sig_fj = sig_fj_1.dot(gh_w[:,None])
+            mean_pred.append(m_sig_fj)
+            
+            #The variance function
+            sig_fj_2 = self.logisticFunc(x)**2
+            sig_fj_2 = sig_fj_2.dot(gh_w[:,None])
+            v_sig_fj = sig_fj_2 - m_sig_fj**2
+            var_pred.append(v_sig_fj)
+        return mean_pred, var_pred                    
 
     def log_predictive(self, Ytest, mu_F_star, v_F_star, num_samples):
         Ntest, D = mu_F_star.shape
