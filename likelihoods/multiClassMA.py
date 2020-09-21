@@ -111,6 +111,112 @@ class MultiClassMA(Likelihood):
         for k in range(K):
             Yhat[:,k,None] = (y==k+1).astype(np.int)
         return Yhat
+    
+    def GaussHermiteMC(self, gh_f, gh_w, m_f, v_f, K):
+        N = m_f.shape[0]
+        if K <= 3:
+            expanded_F_tuples = []
+            grid_tuple = [m_f.shape[0]]
+            for k in range(K):
+                grid_tuple.append(gh_f.shape[0])
+                expanded_fd_tuple = [1]*(K+1)
+                expanded_fd_tuple[k+1] = gh_f.shape[0]
+                expanded_F_tuples.append(tuple(expanded_fd_tuple))
+                
+            # mean-variance tuple
+            mv_tuple = [1]*(K+1)
+            mv_tuple[0] = m_f.shape[0]
+            mv_tuple = tuple(mv_tuple)
+        
+            # building, normalizing and reshaping the grids
+            F = np.zeros((reduce(lambda x, y: x * y, grid_tuple),K))
+            for d in range(K):
+                fd = np.zeros(tuple(grid_tuple))
+                fd[:] = np.reshape(gh_f, expanded_F_tuples[d])*np.sqrt(2*np.reshape(v_f[:,d],mv_tuple)) \
+                        + np.reshape(m_f[:,d],mv_tuple)
+                F[:,d,None] = fd.reshape(reduce(lambda x, y: x * y, grid_tuple), -1, order='C')
+                
+            log_zeta = np.log(self.softmax(F))
+            var_exp_log_zeta = np.zeros((N,K))
+            for k in range(K):
+                log_zetak = log_zeta[:,k].reshape(tuple(grid_tuple))
+                var_exp_k = log_zetak.dot(gh_w) / np.sqrt(np.pi)
+                for kl in range(K-1):
+                    var_exp_k = var_exp_k.dot(gh_w) / np.sqrt(np.pi)
+                var_exp_log_zeta[:,k] = var_exp_k
+                
+            zeta = (self.softmax(F))
+            var_exp_zeta = np.zeros((N,K))
+            for k in range(K):
+                zetak = zeta[:,k].reshape(tuple(grid_tuple))
+                var_exp_k1 = zetak.dot(gh_w) / np.sqrt(np.pi)
+                for kl in range(K-1):
+                    var_exp_k1 = var_exp_k1.dot(gh_w) / np.sqrt(np.pi)
+                var_exp_zeta[:,k] = var_exp_k1
+                
+            zeta2 = (self.softmax(F))**2
+            var_exp_zeta2 = np.zeros((N,K))
+            for k in range(K):
+                zetak2 = zeta2[:,k].reshape(tuple(grid_tuple))
+                var_exp_k2 = zetak2.dot(gh_w) / np.sqrt(np.pi)
+                for kl in range(K-1):
+                    var_exp_k2 = var_exp_k2.dot(gh_w) / np.sqrt(np.pi)
+                var_exp_zeta2[:,k] = var_exp_k2
+                
+        else:
+            var_exp_log_zeta = np.zeros((N,K))
+            var_exp_zeta = np.zeros((N,K))
+            var_exp_zeta2 = np.zeros((N,K))
+            
+            gh_f, gh_w = np.polynomial.hermite.hermgauss(15)
+            expanded_F_tuples = []
+            grid_tuple = [1]
+            for k in range(K):
+                grid_tuple.append(gh_f.shape[0])
+                expanded_fd_tuple = [1]*(K+1)
+                expanded_fd_tuple[k+1] = gh_f.shape[0]
+                expanded_F_tuples.append(tuple(expanded_fd_tuple))
+                
+            # mean-variance tuple
+            mv_tuple = [1]*(K+1)
+            mv_tuple[0] = 1
+            mv_tuple = tuple(mv_tuple)
+            
+            # building, normalizing and reshaping the grids
+            for i in range(N):
+                Faux = np.zeros((reduce(lambda x, y: x * y, grid_tuple),K))
+                for d in range(K):
+                    fd = np.zeros(tuple(grid_tuple))
+                    fd[:] = np.reshape(gh_f, expanded_F_tuples[d])*np.sqrt(2*np.reshape(v_f[i,d],mv_tuple)) \
+                            + np.reshape(m_f[i,d],mv_tuple)
+                    Faux[:,d,None] = fd.reshape(reduce(lambda x, y: x * y, grid_tuple), -1, order='C')
+                    
+                log_zeta = np.log(self.softmax(Faux))
+                for k in range(K):
+                    log_zetak = log_zeta[:,k].reshape(tuple(grid_tuple))
+                    var_exp_k = log_zetak.dot(gh_w) / np.sqrt(np.pi)
+                    for kl in range(K-1):
+                        var_exp_k = var_exp_k.dot(gh_w) / np.sqrt(np.pi)
+                    var_exp_log_zeta[i,k] = var_exp_k
+                
+                zeta = (self.softmax(Faux))
+                for k in range(K):
+                    zetak = zeta[:,k].reshape(tuple(grid_tuple))
+                    var_exp_k1 = zetak.dot(gh_w) / np.sqrt(np.pi)
+                    for kl in range(K-1):
+                        var_exp_k1 = var_exp_k1.dot(gh_w) / np.sqrt(np.pi)
+                    var_exp_zeta[i,k] = var_exp_k1
+                
+                zeta2 = (self.softmax(Faux))**2
+                for k in range(K):
+                    zetak2 = zeta2[:,k].reshape(tuple(grid_tuple))
+                    var_exp_k2 = zetak2.dot(gh_w) / np.sqrt(np.pi)
+                    for kl in range(K-1):
+                        var_exp_k2 = var_exp_k2.dot(gh_w) / np.sqrt(np.pi)
+                    var_exp_zeta2[i,k] = var_exp_k2
+                
+        
+        return var_exp_log_zeta, var_exp_zeta, var_exp_zeta2
 
     def var_exp(self, Y, m, v, GN=None, gh_points=None, Y_metadata=None):
         # Variational Expectation
@@ -136,37 +242,11 @@ class MultiClassMA(Likelihood):
         Yhat = np.ones((N, K, R))
         for r in range(R):
             Yhat[:,:,r] = self.one_of_K(Y[:,r,None], K)
-        
-        expanded_F_tuples = []
-        grid_tuple = [m_f.shape[0]]
-        for k in range(K):
-            grid_tuple.append(gh_f.shape[0])
-            expanded_fd_tuple = [1]*(K+1)
-            expanded_fd_tuple[k+1] = gh_f.shape[0]
-            expanded_F_tuples.append(tuple(expanded_fd_tuple))
             
-        # mean-variance tuple
-        mv_tuple = [1]*(K+1)
-        mv_tuple[0] = m_f.shape[0]
-        mv_tuple = tuple(mv_tuple)
-
-        # building, normalizing and reshaping the grids
-        F = np.zeros((reduce(lambda x, y: x * y, grid_tuple),K))
-        for d in range(K):
-            fd = np.zeros(tuple(grid_tuple))
-            fd[:] = np.reshape(gh_f, expanded_F_tuples[d])*np.sqrt(2*np.reshape(v_f[:,d],mv_tuple)) \
-                    + np.reshape(m_f[:,d],mv_tuple)
-            F[:,d,None] = fd.reshape(reduce(lambda x, y: x * y, grid_tuple), -1, order='C')
         
-       # E_{q(f_{1,n})...q(f_{K,n})}[log zeta]
-        log_zeta = np.log(self.softmax(F))
-        var_exp_log_zeta = np.zeros((N,K))
-        for k in range(K):
-            log_zetak = log_zeta[:,k].reshape(tuple(grid_tuple))
-            var_exp_k = log_zetak.dot(gh_w) / np.sqrt(np.pi)
-            for kl in range(K-1):
-                var_exp_k = var_exp_k.dot(gh_w) / np.sqrt(np.pi)
-            var_exp_log_zeta[:,k] = var_exp_k
+        # E_{q(f_{1,n})...q(f_{K,n})}[log zeta]
+        var_exp_log_zeta,_,_ = self.GaussHermiteMC(gh_f, gh_w, m_f, v_f, K)
+        
         
         
         # E_{q(g_m^m)}[z_n^m] 
@@ -213,26 +293,6 @@ class MultiClassMA(Likelihood):
         for r in range(R):
             Yhat[:,:,r] = self.one_of_K(Y[:,r,None], K)
         
-        expanded_F_tuples = []
-        grid_tuple = [m_f.shape[0]]
-        for k in range(K):
-            grid_tuple.append(gh_f.shape[0])
-            expanded_fd_tuple = [1]*(K+1)
-            expanded_fd_tuple[k+1] = gh_f.shape[0]
-            expanded_F_tuples.append(tuple(expanded_fd_tuple))
-            
-        # mean-variance tuple
-        mv_tuple = [1]*(K+1)
-        mv_tuple[0] = m_f.shape[0]
-        mv_tuple = tuple(mv_tuple)
-
-        # building, normalizing and reshaping the grids
-        F = np.zeros((reduce(lambda x, y: x * y, grid_tuple),K))
-        for d in range(K):
-            fd = np.zeros(tuple(grid_tuple))
-            fd[:] = np.reshape(gh_f, expanded_F_tuples[d])*np.sqrt(2*np.reshape(v_f[:,d],mv_tuple)) \
-                    + np.reshape(m_f[:,d],mv_tuple)
-            F[:,d,None] = fd.reshape(reduce(lambda x, y: x * y, grid_tuple), -1, order='C')
             
         # E_{q(g_m^m)}[z_n^m] 
         Eq_g = np.empty((m.shape[0],R))
@@ -243,14 +303,7 @@ class MultiClassMA(Likelihood):
             
             
         # E_{q(f_{1,n})...q(f_{K,n})}[log zeta]
-        log_zeta = np.log(self.softmax(F))
-        var_exp_log_zeta = np.zeros((N,K))
-        for k in range(K):
-            log_zetak = log_zeta[:,k].reshape(tuple(grid_tuple))
-            var_exp_k = log_zetak.dot(gh_w) / np.sqrt(np.pi)
-            for kl in range(K-1):
-                var_exp_k = var_exp_k.dot(gh_w) / np.sqrt(np.pi)
-            var_exp_log_zeta[:,k] = var_exp_k
+        var_exp_log_zeta, var_exp_zeta, var_exp_zeta2 = self.GaussHermiteMC(gh_f, gh_w, m_f, v_f, K)
         
 
         #Derivates #######################################################
@@ -258,14 +311,7 @@ class MultiClassMA(Likelihood):
         var_exp_dv = np.empty((m.shape[0],R+K)) 
         
         # E_{q(f_{1,n})...q(f_{K,n})}[zeta]
-        zeta = (self.softmax(F))
-        var_exp_zeta = np.zeros((N,K))
-        for k in range(K):
-            zetak = zeta[:,k].reshape(tuple(grid_tuple))
-            var_exp_k1 = zetak.dot(gh_w) / np.sqrt(np.pi)
-            for kl in range(K-1):
-                var_exp_k1 = var_exp_k1.dot(gh_w) / np.sqrt(np.pi)
-            var_exp_zeta[:,k] = var_exp_k1
+        
         
         # Auxxx = np.empty((m.shape[0],K))
         # auxDif = np.empty((m.shape[0],R))
@@ -278,7 +324,7 @@ class MultiClassMA(Likelihood):
                                    (Yhat - np.reshape(var_exp_zeta, (N, K, 1))), axis=2)     
         var_exp_dv[:, :K] = -0.5*np.sum( (np.reshape(Eq_g*iAnn, (N,1,R))* \
                                           (np.reshape(var_exp_zeta, (N, K, 1)) - \
-                                           np.reshape(var_exp_zeta**2, (N, K, 1)))), axis=2)
+                                           np.reshape(var_exp_zeta2, (N, K, 1)))), axis=2)
         
         
         Const = np.sum((Yhat*np.reshape(var_exp_log_zeta, (N, K, 1))), axis = 1) + np.log(K)
@@ -324,7 +370,7 @@ class MultiClassMA(Likelihood):
         auxv = v[:,:self.K]
         
         # gh: Gaussian-Hermite quadrature
-        gh_f, gh_w = self._gh_points()
+        gh_f, gh_w = np.polynomial.hermite.hermgauss(5)
 
         expanded_F_tuples = []
         grid_tuple = [auxm.shape[0]]
