@@ -1,0 +1,36 @@
+% model_pca.tex
+%
+% Copyright (C) 2012 Jaakko Luttinen
+%
+% The MIT License
+%
+% See LICENSE file for more details.
+
+% PCA model
+
+
+
+%\beginpgfgraphicnamed{model-pca}
+\begin{tikzpicture}
+
+% Define nodes
+\node[obs]                               (y) {$y_n^r$};
+\node[latent, above=of y]                   (t) {$y_n$};
+\node[obs, right=1.2cm of t]            (x) {$\ve{x}_n$};
+\node[latent, right=1.2cm of y]            (v) {$v_{n}^r$};
+
+% Connect the nodes
+\edge {v,t} {y} ; %
+\edge {x} {t,v} ; %
+
+% Plates
+\plate {ym} {(y)(v)} {$R$} ;
+\plate {} {(x)(ym.north west)(ym.south east)} {$N$} ;
+
+\end{tikzpicture}
+%\endpgfgraphicnamed
+
+%%% Local Variables: 
+%%% mode: tex-pdf
+%%% TeX-master: "example"
+%%% End: 

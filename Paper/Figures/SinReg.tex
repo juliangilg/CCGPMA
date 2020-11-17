@@ -1,0 +1,76 @@
+\begin{tikzpicture}[]
+\begin{axis}[scale=.6,name=plot1, xmin=0, xmax=1,ymin=-1.25,ymax=1.1,
+x tick label style={font=\footnotesize, align=center},
+y tick label style={font=\footnotesize, align=center},
+legend style={font=\small},
+legend cell align={left},
+cycle list name=color list,ytick={-0.8,-0.4,0,0.4,0.8},
+%ymajorgrids=true,xmajorgrids=true,grid style=dashed,
+title={GPR-GOLD}]
+\addplot+[opacity=1,dashed,thick,smooth,black]table{Figures/GT.dat};
+\addplot+[opacity=1,blue,very thick,smooth]table{Figures/GPGT.dat};
+\addplot+[opacity=0,name path=A,very thick,smooth,red]table{Figures/GPGTU.dat};
+\addplot+[opacity=0,name path=B,very thick,smooth,red]table{Figures/GPGTL.dat};
+\addplot[opacity=0.3,blue!50] fill between[of=A and B];
+\end{axis}
+\begin{axis}[scale=.6,name=plot2,at={($(plot1.north east)+(0.12cm,0cm)$)},anchor=north west, xmin=0, xmax=1,ymin=-1.25,ymax=1.1,x tick label style={font=\footnotesize, align=center},
+y tick label style={font=\footnotesize, align=center},legend style={font=\small},
+legend cell align={left},cycle list name=color list,yticklabel=\empty,xticklabel=\empty, %xticklabel=\empty,ytick={-0.8,-0.4,0,0.4,0.8},ymajorgrids=true,xmajorgrids=true,grid style=dashed,
+title={GPR-Av}]
+\addplot+[opacity=1,dashed,thick,smooth,black]table{Figures/GT.dat};
+\addplot+[opacity=1,blue,very thick,smooth]table{Figures/GPAv.dat};
+\addplot+[opacity=0,name path=A,very thick,smooth,red]table{Figures/GPAvU.dat};
+\addplot+[opacity=0,name path=B,very thick,smooth,red]table{Figures/GPAvL.dat};
+\addplot[opacity=0.3,blue!50] fill between[of=A and B];
+\end{axis}
+\begin{axis}[scale=.6,name=plot3,at={($(plot2.north east)+(0.12cm,0cm)$)},anchor=north west, xmin=0, xmax=1,ymin=-1.25,ymax=1.1,x tick label style={font=\footnotesize, align=center},
+y tick label style={font=\footnotesize, align=center},legend style={font=\small},
+legend cell align={left},cycle list name=color list,yticklabel=\empty,xticklabel=\empty, %xticklabel=\empty,ytick={-0.8,-0.4,0,0.4,0.8},ymajorgrids=true,xmajorgrids=true,grid style=dashed,
+title={MA-LFCR}]
+\addplot+[opacity=1,dashed,thick,smooth,black]table{Figures/GT.dat};
+\addplot+[opacity=1,blue,very thick,smooth]table{Figures/LFCR.dat};
+\end{axis}
+\begin{axis}[scale=.6,name=plot4,at={($(plot3.north east)+(0.12cm,0cm)$)},anchor=north west, xmin=0, xmax=1,ymin=-1.25,ymax=1.1,x tick label style={font=\footnotesize, align=center},
+y tick label style={font=\footnotesize, align=center},legend style={font=\small},
+legend cell align={left},cycle list name=color list,yticklabel=\empty,xticklabel=\empty, %xticklabel=\empty,ytick={-0.8,-0.4,0,0.4,0.8},ymajorgrids=true,xmajorgrids=true,grid style=dashed,
+title={MA-GPR}]
+\addplot+[opacity=1,dashed,thick,smooth,black]table{Figures/GT.dat};
+\addplot+[opacity=1,blue,very thick,smooth]table{Figures/GPM.dat};
+\addplot+[opacity=0,name path=A,very thick,smooth,red]table{Figures/GPU.dat};
+\addplot+[opacity=0,name path=B,very thick,smooth,red]table{Figures/GPL.dat};
+\addplot[opacity=0.3,blue!50] fill between[of=A and B];
+\end{axis}
+\begin{axis}[scale=.6,name=plot5,at={($(plot2.south west)+(0cm,-1.0cm)$)},anchor=north west, xmin=0, xmax=1,ymin=-1.25,ymax=1.1,x tick label style={font=\footnotesize, align=center},
+y tick label style={font=\footnotesize, align=center},legend style={font=\small},
+legend cell align={left},cycle list name=color list,yticklabel=\empty,xticklabel=\empty, %xticklabel=\empty,ytick={-0.8,-0.4,0,0.4,0.8},ymajorgrids=true,xmajorgrids=true,grid style=dashed,
+title={MA-DL},cycle list name=color list,legend columns=-1,legend style={fill=white, fill opacity=1, draw opacity=1,text opacity=1},legend style={font=\footnotesize},]
+\addplot+[forget plot,opacity=1,dashed,thick,smooth,black]table{Figures/GT.dat};
+\addplot+[opacity=1,very thick,smooth,blue]table{Figures/MADLB.dat};
+\addlegendentry{B};
+\addplot+[opacity=1,very thick,smooth,red]table{Figures/MADLS.dat};
+\addlegendentry{S};
+\addplot+[opacity=1,very thick,smooth,green]table{Figures/MADLB+S.dat};
+\addlegendentry{B+S};
+\end{axis}
+\begin{axis}[scale=.6,name=plot6,at={($(plot5.north east)+(0.12cm,0cm)$)},anchor=north west, xmin=0, xmax=1,ymin=-1.25,ymax=1.1,x tick label style={font=\footnotesize, align=center},
+y tick label style={font=\footnotesize, align=center},legend style={font=\small},
+legend cell align={left},cycle list name=color list,yticklabel=\empty, %xticklabel=\empty,ytick={-0.8,-0.4,0,0.4,0.8},ymajorgrids=true,xmajorgrids=true,grid style=dashed,
+title={CGPMA-R},xticklabel=\empty,]
+\addplot+[opacity=1,dashed,thick,smooth,black]table{Figures/GT.dat};
+\addplot+[opacity=1,blue,very thick,smooth]table{Figures/CGPM.dat};
+\addplot+[opacity=0,name path=A,very thick,smooth,red]table{Figures/CGPU.dat};
+\addplot+[opacity=0,name path=B,very thick,smooth,red]table{Figures/CGPL.dat};
+\addplot[opacity=0.3,blue!50] fill between[of=A and B];
+\end{axis}
+\begin{axis}[scale=.6,name=plot7,at={($(plot6.north east)+(0.12cm,0cm)$)},anchor=north west, xmin=0, xmax=1,ymin=-1.25,ymax=1.1,x tick label style={font=\footnotesize, align=center},
+y tick label style={font=\footnotesize, align=center},legend style={font=\small},
+legend cell align={left},cycle list name=color list,yticklabel=\empty, xticklabel=\empty,
+%ytick={-0.8,-0.4,0,0.4,0.8},ymajorgrids=true,xmajorgrids=true,grid style=dashed,
+title={CCGPMA-R}]
+\addplot+[opacity=1,dashed,thick,smooth,black]table{Figures/GT.dat};
+\addplot+[opacity=1,blue,very thick,smooth]table{Figures/CCGPM.dat};
+\addplot+[opacity=0,name path=C,very thick,smooth,blue]table{Figures/CCGPU.dat};
+\addplot+[opacity=0,name path=D,very thick,smooth,blue]table{Figures/CCGPL.dat};
+\addplot[opacity=0.3,blue!50] fill between[of=C and D];
+\end{axis}
+\end{tikzpicture}

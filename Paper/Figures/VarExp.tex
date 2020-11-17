@@ -1,0 +1,294 @@
+%%%%%%%%%%%%%%%%%%%%%First file 
+\begin{tikzpicture}[]
+\begin{axis}[scale=.47,name=plot1, xmin=0, xmax=1,ymin=0,ymax=0.45,
+x tick label style={font=\footnotesize, align=center},
+y tick label style={font=\footnotesize, align=center},
+legend style={font=\small},
+legend cell align={left},
+cycle list name=color list, %list,ytick={0,0.1,0.2,0.3,0.4},ymajorgrids=true,xmajorgrids=true,grid style=dashed,
+title={True Variances},ylabel={Annotator 1}]
+\addplot+[opacity=1,blue,thick,smooth,black]table{Figures/TExp0.dat};
+\end{axis}
+\begin{axis}[scale=.47,name=plot2,at={($(plot1.north east)+(0.12cm,0cm)$)},anchor=north west, xmin=0, xmax=1,ymin=0,ymax=0.45,x tick label style={font=\footnotesize, align=center},
+y tick label style={font=\footnotesize, align=center},
+legend cell align={left},cycle list name=color list,yticklabel=\empty, %xticklabel=\empty,ytick={0,0.1,0.2,0.3,0.4},ymajorgrids=true,xmajorgrids=true,grid style=dashed,
+title={MA-LFCR}]
+\addplot+[opacity=1,dashed,thick,smooth,black]table{Figures/TExp0.dat};
+\addplot[very thick,blue,domain=0:1]{0.32};
+\node[anchor=north west] at (axis cs: 0.02,0.44) {\small$R^2=-3.1347$};
+\end{axis}
+\begin{axis}[scale=.47,name=plot3,at={($(plot2.north east)+(0.12cm,0cm)$)},anchor=north west, xmin=0, xmax=1,ymin=0,ymax=0.45,x tick label style={font=\footnotesize, align=center},
+y tick label style={font=\footnotesize, align=center},legend style={font=\small},
+legend cell align={left},cycle list name=color list,yticklabel=\empty, %xticklabel=\empty,ytick={0,0.1,0.2,0.3,0.4},ymajorgrids=true,xmajorgrids=true,grid style=dashed,
+title={MA-GPR}]
+\addplot+[opacity=1,dashed,thick,smooth,black]table{Figures/TExp0.dat};
+\addplot[very thick,blue,domain=0:1]{0.3044};
+\node[anchor=north west] at (axis cs: 0.02,0.44) {\small$R^2=-2.6413$};
+\end{axis}
+\begin{axis}[scale=.47,name=plot4,at={($(plot3.north east)+(0.12cm,0cm)$)},anchor=north west, xmin=0, xmax=1,ymin=0,ymax=0.45,x tick label style={font=\footnotesize, align=center},
+y tick label style={font=\footnotesize, align=center},legend style={font=\small},
+legend cell align={left},cycle list name=color list,yticklabel=\empty, %xticklabel=\empty,ytick={0,0.1,0.2,0.3,0.4},ymajorgrids=true,xmajorgrids=true,grid style=dashed,
+title={CGPMA-R}]
+\addplot+[opacity=1,dashed,thick,smooth,black]table{Figures/TExp0.dat};
+\addplot+[opacity=1,blue,very thick,smooth]table{Figures/CGPExp0.dat};
+\addplot+[opacity=0,name path=C,very thick,smooth,blue]table{Figures/CGPExpU0.dat};
+\addplot+[opacity=0,name path=D,very thick,smooth,blue]table{Figures/CGPExpL0.dat};
+\addplot[opacity=0.3,blue!50] fill between[of=C and D];
+\node[anchor=north west] at (axis cs: 0.02,0.44) {\small$R^2=0.5927$};
+\end{axis}
+\begin{axis}[scale=.47,name=plot5,at={($(plot4.north east)+(0.12cm,0cm)$)},anchor=north west, xmin=0, xmax=1,ymin=0,ymax=0.45,x tick label style={font=\footnotesize, align=center},
+y tick label style={font=\footnotesize, align=center},legend style={font=\small},
+legend cell align={left},cycle list name=color list,yticklabel=\empty, %xticklabel=\empty,ytick={0,0.1,0.2,0.3,0.4},ymajorgrids=true,xmajorgrids=true,grid style=dashed,
+title={CCGPMA-R},cycle list name=color list,legend columns=-1,legend style={fill=white, fill opacity=1, draw opacity=1,text opacity=1},legend style={font=\footnotesize},]
+\addplot+[forget plot,opacity=1,dashed,thick,smooth,black]table{Figures/TExp0.dat};
+\addplot+[opacity=1,blue,very thick,smooth]table{Figures/CCGPExp0.dat};
+\addplot+[opacity=0,name path=C,very thick,smooth,blue]table{Figures/CCGPExpU0.dat};
+\addplot+[opacity=0,name path=D,very thick,smooth,blue]table{Figures/CCGPExpL0.dat};
+\addplot[opacity=0.3,blue!50] fill between[of=C and D];
+\node[anchor=north west] at (axis cs: 0.02,0.44) {\small$R^2=0.6531$};
+\end{axis}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Second file
+\begin{axis}[scale=.47,name=plot6,at={($(plot1.south west)+(0cm,-0.5cm)$)},
+anchor=north west, xmin=0, xmax=1,ymin=0,ymax=0.75,
+x tick label style={font=\footnotesize, align=center},
+y tick label style={font=\footnotesize, align=center},
+cycle list name=color list,xticklabel=\empty,
+%ytick={0,0.1,0.2,0.3,0.4,0.5},
+%ymajorgrids=true,xmajorgrids=true,grid style=dashed,
+ylabel={Annotator 2}]
+\addplot+[opacity=1,blue,thick,smooth,black]table{Figures/TExp1.dat};
+\end{axis}
+\begin{axis}[scale=.47,name=plot7,at={($(plot6.north east)+(0.12cm,0cm)$)},
+anchor=north west, xmin=0, xmax=1,ymin=0,ymax=0.75,
+yticklabel=\empty, xticklabel=\empty,
+cycle list name=color list,
+%ytick={0,0.1,0.2,0.3,0.4,0.5},
+%ymajorgrids=true,xmajorgrids=true,grid style=dashed]
+]
+\addplot+[opacity=1,dashed,blue,thick,smooth,black]table{Figures/TExp1.dat};
+\addplot[very thick,blue,domain=0:1]{0.5};
+\node[anchor=north west] at (axis cs: 0.02,0.73) {\small$R^2=-9.8729$};
+\end{axis}
+\begin{axis}[scale=.47,name=plot8,at={($(plot7.north east)+(0.12cm,0cm)$)},
+anchor=north west, xmin=0, xmax=1,ymin=0,ymax=0.75,
+yticklabel=\empty, xticklabel=\empty,
+cycle list name=color list,
+%ytick={0,0.1,0.2,0.3,0.4,0.5},
+%ymajorgrids=true,xmajorgrids=true,grid style=dashed]
+]
+\addplot+[opacity=1,dashed,blue,thick,smooth,black]table{Figures/TExp1.dat};
+\addplot[very thick,blue,domain=0:1]{0.4753};
+\node[anchor=north west] at (axis cs: 0.02,0.73) {\small$R^2=-8.2662$};
+\end{axis}
+\begin{axis}[scale=.47,name=plot9,at={($(plot8.north east)+(0.12cm,0cm)$)},
+anchor=north west, xmin=0, xmax=1,ymin=0,ymax=0.75,
+yticklabel=\empty, xticklabel=\empty,
+cycle list name=color list,
+%ytick={0,0.1,0.2,0.3,0.4,0.5},
+%ymajorgrids=true,xmajorgrids=true,grid style=dashed]
+]
+\addplot+[opacity=1,dashed,thick,smooth,black]table{Figures/TExp1.dat};
+\addplot+[opacity=1,blue,very thick,smooth]table{Figures/CGPExp1.dat};
+\addplot+[opacity=0,name path=C,very thick,smooth,blue]table{Figures/CGPExpU1.dat};
+\addplot+[opacity=0,name path=D,very thick,smooth,blue]table{Figures/CGPExpL1.dat};
+\addplot[opacity=0.3,blue!50] fill between[of=C and D];
+\node[anchor=north west] at (axis cs: 0.02,0.73) {\small$R^2=-0.2048$};
+\end{axis}
+\begin{axis}[scale=.47,name=plot10,at={($(plot9.north east)+(0.12cm,0cm)$)},
+anchor=north west, xmin=0, xmax=1,ymin=0,ymax=0.75,
+yticklabel=\empty, xticklabel=\empty,
+cycle list name=color list,
+%ytick={0,0.1,0.2,0.3,0.4,0.5},
+%ymajorgrids=true,xmajorgrids=true,grid style=dashed]
+]
+\addplot+[opacity=1,dashed,thick,smooth,black]table{Figures/TExp1.dat};
+\addplot+[opacity=1,blue,very thick,smooth]table{Figures/CCGPExp1.dat};
+\addplot+[opacity=0,name path=C,very thick,smooth,blue]table{Figures/CCGPExpU1.dat};
+\addplot+[opacity=0,name path=D,very thick,smooth,blue]table{Figures/CCGPExpL1.dat};
+\addplot[opacity=0.3,blue!50] fill between[of=C and D];
+\node[anchor=north west] at (axis cs: 0.02,0.73) {\small$R^2=0.1688$};
+\end{axis}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Third file
+\begin{axis}[scale=.47,name=plot11,at={($(plot6.south west)+(0cm,-0.5cm)$)},
+anchor=north west, xmin=0, xmax=1,ymin=0.8,ymax=4.2,
+x tick label style={font=\footnotesize, align=center},
+y tick label style={font=\footnotesize, align=center},
+cycle list name=color list,xticklabel=\empty,
+%ytick={0,1,2,3,4},
+%ymajorgrids=true,xmajorgrids=true,grid style=dashed,
+ylabel={Annotator 3}]
+\addplot+[opacity=1,blue,thick,smooth,black]table{Figures/TExp2.dat};
+\end{axis}
+\begin{axis}[scale=.47,name=plot12,at={($(plot11.north east)+(0.12cm,0cm)$)},
+anchor=north west, xmin=0, xmax=1,ymin=0.8,ymax=4.2,
+yticklabel=\empty, xticklabel=\empty,
+cycle list name=color list,
+%ytick={0,1,2,3,4},
+%ymajorgrids=true,xmajorgrids=true,grid style=dashed]
+]
+\addplot+[opacity=1,dashed,thick,smooth,black]table{Figures/TExp2.dat};
+\addplot[very thick,blue,domain=0:1]{1.87};
+\node[anchor=north west] at (axis cs: 0.02,4.1) {\small$R^2=-0.0197$};
+\end{axis}
+\begin{axis}[scale=.47,name=plot13,at={($(plot12.north east)+(0.12cm,0cm)$)},
+anchor=north west, xmin=0, xmax=1,ymin=0.8,ymax=4.2,
+yticklabel=\empty, xticklabel=\empty,
+cycle list name=color list,
+%ytick={0,1,2,3,4},
+%ymajorgrids=true,xmajorgrids=true,grid style=dashed]
+]
+\addplot+[opacity=1,dashed,thick,smooth,black]table{Figures/TExp2.dat};
+\addplot[very thick,blue,domain=0:1]{1.29};
+\node[anchor=north west] at (axis cs: 0.02,4.1) {\small$R^2=-1.3206$};
+\end{axis}
+\begin{axis}[scale=.47,name=plot14,at={($(plot13.north east)+(0.12cm,0cm)$)},
+anchor=north west, xmin=0, xmax=1,ymin=0.8,ymax=4.2,
+yticklabel=\empty, xticklabel=\empty,
+cycle list name=color list,
+%ytick={0,1,2,3,4},
+%ymajorgrids=true,xmajorgrids=true,grid style=dashed]
+]
+\addplot+[opacity=1,dashed,thick,smooth,black]table{Figures/TExp2.dat};
+\addplot+[opacity=1,blue,very thick,smooth]table{Figures/CGPExp2.dat};
+\addplot+[opacity=0,name path=C,very thick,smooth,blue]table{Figures/CGPExpU2.dat};
+\addplot+[opacity=0,name path=D,very thick,smooth,blue]table{Figures/CGPExpL2.dat};
+\addplot[opacity=0.3,blue!50] fill between[of=C and D];
+\node[anchor=north west] at (axis cs: 0.02,4.1) {\small$R^2=0.0747$};
+\end{axis}
+\begin{axis}[scale=.47,name=plot15,at={($(plot14.north east)+(0.12cm,0cm)$)},
+anchor=north west, xmin=0, xmax=1,ymin=0.8,ymax=4.2,
+yticklabel=\empty, xticklabel=\empty,
+cycle list name=color list,
+%ytick={0,1,2,3,4},
+%ymajorgrids=true,xmajorgrids=true,grid style=dashed]
+]
+\addplot+[opacity=1,dashed,thick,smooth,black]table{Figures/TExp2.dat};
+\addplot+[opacity=1,blue,very thick,smooth]table{Figures/CCGPExp2.dat};
+\addplot+[opacity=0,name path=C,very thick,smooth,blue]table{Figures/CCGPExpU2.dat};
+\addplot+[opacity=0,name path=D,very thick,smooth,blue]table{Figures/CCGPExpL2.dat};
+\addplot[opacity=0.3,blue!50] fill between[of=C and D];
+\node[anchor=north west] at (axis cs: 0.02,4.1) {\small$R^2=0.1539$};
+\end{axis}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Fourth file
+\begin{axis}[scale=.47,name=plot16,at={($(plot11.south west)+(0cm,-0.5cm)$)},
+anchor=north west, xmin=0, xmax=1,ymin=1,ymax=6,
+x tick label style={font=\footnotesize, align=center},
+y tick label style={font=\footnotesize, align=center},
+cycle list name=color list,xticklabel=\empty,
+%ytick={0,1,2,3,4,5},
+%ymajorgrids=true,xmajorgrids=true,grid style=dashed,
+ylabel={Annotator 4}]
+\addplot+[opacity=1,blue,thick,smooth,black]table{Figures/TExp3.dat};
+\end{axis}
+\begin{axis}[scale=.47,name=plot17,at={($(plot16.north east)+(0.12cm,0cm)$)},
+anchor=north west, xmin=0, xmax=1,ymin=1,ymax=7.0,
+yticklabel=\empty, xticklabel=\empty,
+cycle list name=color list,
+%ytick={0,1,2,3,4,5},
+%ymajorgrids=true,xmajorgrids=true,grid style=dashed]
+]
+\addplot+[opacity=1,blue,dashed,thick,smooth,black]table{Figures/TExp3.dat};
+\addplot[very thick,blue,domain=0:1]{2.59};
+\node[anchor=north west] at (axis cs: 0.02,6.8) {\small$R^2=-0.0089$};
+\end{axis}
+\begin{axis}[scale=.47,name=plot18,at={($(plot17.north east)+(0.12cm,0cm)$)},
+anchor=north west, xmin=0, xmax=1,ymin=1,ymax=7.0,
+yticklabel=\empty, xticklabel=\empty,
+cycle list name=color list,
+%ytick={0,1,2,3,4,5},
+%ymajorgrids=true,xmajorgrids=true,grid style=dashed]
+]
+\addplot+[opacity=1,blue,dashed,thick,smooth,black]table{Figures/TExp3.dat};
+\addplot[very thick,blue,domain=0:1]{1.4802};
+\node[anchor=north west] at (axis cs: 0.02,6.8) {\small$R^2=-3.2437$};
+\end{axis}
+\begin{axis}[scale=.47,name=plot19,at={($(plot18.north east)+(0.12cm,0cm)$)},
+anchor=north west, xmin=0, xmax=1,ymin=1,ymax=7.0,
+yticklabel=\empty, xticklabel=\empty,
+cycle list name=color list,
+%ytick={0,1,2,3,4,5},
+%ymajorgrids=true,xmajorgrids=true,grid style=dashed]
+]
+\addplot+[opacity=1,dashed,thick,smooth,black]table{Figures/TExp3.dat};
+\addplot+[opacity=1,blue,very thick,smooth]table{Figures/CGPExp3.dat};
+\addplot+[opacity=0,name path=C,very thick,smooth,blue]table{Figures/CGPExpU3.dat};
+\addplot+[opacity=0,name path=D,very thick,smooth,blue]table{Figures/CGPExpL3.dat};
+\addplot[opacity=0.3,blue!50] fill between[of=C and D];
+\node[anchor=north west] at (axis cs: 0.02,6.8) {\small$R^2=-1.5527$};
+\end{axis}
+\begin{axis}[scale=.47,name=plot20,at={($(plot19.north east)+(0.12cm,0cm)$)},
+anchor=north west, xmin=0, xmax=1,ymin=1,ymax=7.0,
+yticklabel=\empty, xticklabel=\empty,
+cycle list name=color list,
+%ytick={0,1,2,3,4,5},
+%ymajorgrids=true,xmajorgrids=true,grid style=dashed]
+]
+\addplot+[opacity=1,dashed,thick,smooth,black]table{Figures/TExp3.dat};
+\addplot+[opacity=1,blue,very thick,smooth]table{Figures/CCGPExp3.dat};
+\addplot+[opacity=0,name path=C,very thick,smooth,blue]table{Figures/CCGPExpU3.dat};
+\addplot+[opacity=0,name path=D,very thick,smooth,blue]table{Figures/CCGPExpL3.dat};
+\addplot[opacity=0.3,blue!50] fill between[of=C and D];
+\node[anchor=north west] at (axis cs: 0.02,6.8) {\small$R^2=-1.3562$};
+\end{axis}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Fifth file
+\begin{axis}[scale=.47,name=plot21,at={($(plot16.south west)+(0cm,-0.5cm)$)},
+anchor=north west, xmin=0, xmax=1,ymin=1,ymax=8.5,
+x tick label style={font=\footnotesize, align=center},
+y tick label style={font=\footnotesize, align=center},
+cycle list name=color list,xticklabel=\empty,
+%ytick={0,1,2,3,4,5,6,7,8},
+%ymajorgrids=true,xmajorgrids=true,grid style=dashed,ylabel={Annotator 5}]
+]
+\addplot+[opacity=1,blue,thick,smooth,black]table{Figures/TExp4.dat};
+\end{axis}
+\begin{axis}[scale=.47,name=plot22,at={($(plot21.north east)+(0.12cm,0cm)$)},
+anchor=north west, xmin=0, xmax=1,ymin=1,ymax=8.5,
+yticklabel=\empty, xticklabel=\empty,
+cycle list name=color list,
+%ytick={0,1,2,3,4,5,6,7,8},
+%ymajorgrids=true,xmajorgrids=true,grid style=dashed]
+]
+\addplot+[opacity=1,blue,dashed,thick,smooth,black]table{Figures/TExp4.dat};
+\addplot[very thick,blue,domain=0:1]{4.61};
+\node[anchor=north west] at (axis cs: 0.02,8.3) {\small$R^2=-0.1911$};
+\end{axis}
+\begin{axis}[scale=.47,name=plot23,at={($(plot22.north east)+(0.12cm,0cm)$)},
+anchor=north west, xmin=0, xmax=1,ymin=1,ymax=8.5,
+yticklabel=\empty, xticklabel=\empty,
+cycle list name=color list,
+%ytick={0,1,2,3,4,5,6,7,8},
+%ymajorgrids=true,xmajorgrids=true,grid style=dashed
+]
+\addplot+[opacity=1,blue,dashed,thick,smooth,black]table{Figures/TExp4.dat};
+\addplot[very thick,blue,domain=0:1]{2.08};
+\node[anchor=north west] at (axis cs: 0.02,8.3) {\small$R^2=-3.1568$};
+\end{axis}
+\begin{axis}[scale=.47,name=plot24,at={($(plot23.north east)+(0.12cm,0cm)$)},
+anchor=north west, xmin=0, xmax=1,ymin=1,ymax=8.5,
+yticklabel=\empty, xticklabel=\empty,
+cycle list name=color list,
+%ytick={0,1,2,3,4,5,6,7,8},
+%ymajorgrids=true,xmajorgrids=true,grid style=dashed
+]
+\addplot+[opacity=1,dashed,thick,smooth,black]table{Figures/TExp4.dat};
+\addplot+[opacity=1,blue,very thick,smooth]table{Figures/CGPExp4.dat};
+\node[anchor=north west] at (axis cs: 0.02,8.3) {\small$R^2=-0.4500$};
+\addplot+[opacity=0,name path=C,very thick,smooth,blue]table{Figures/CGPExpU4.dat};
+\addplot+[opacity=0,name path=D,very thick,smooth,blue]table{Figures/CGPExpL4.dat};
+\addplot[opacity=0.3,blue!50] fill between[of=C and D];
+\end{axis}
+\begin{axis}[scale=.47,name=plot25,at={($(plot24.north east)+(0.12cm,0cm)$)},
+anchor=north west, xmin=0, xmax=1,ymin=1,ymax=8.5,
+yticklabel=\empty, xticklabel=\empty,
+cycle list name=color list,
+%ytick={0,1,2,3,4,5,6,7,8},
+%ymajorgrids=true,xmajorgrids=true,grid style=dashed,
+legend style={font=\footnotesize},]
+\addplot+[opacity=1,dashed,thick,smooth,black]table{Figures/TExp4.dat};
+\addplot+[opacity=1,blue,very thick,smooth]table{Figures/CCGPExp4.dat};
+\node[anchor=north west] at (axis cs: 0.02,8.3) {\small$R^2=0.2415$};
+\addplot+[opacity=0,name path=C,very thick,smooth,blue]table{Figures/CCGPExpU4.dat};
+\addplot+[opacity=0,name path=D,very thick,smooth,blue]table{Figures/CCGPExpL4.dat};
+\addplot[opacity=0.3,blue!50] fill between[of=C and D];
+\end{axis}
+\end{tikzpicture}
