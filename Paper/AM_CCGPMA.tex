@@ -195,6 +195,7 @@
 % correct bad hyphenation here
 \hyphenation{op-tical net-works semi-conduc-tor}
 
+\newcommand{\comment}[2]{{\color{blue}#1} {\color{red}#2}}
 
 \begin{document}
 %
@@ -219,9 +220,9 @@
 \author{J. Gil-Gonz\'alez,
         J. Giraldo,
         A. \'Alvarez-Meza, A. Orozco-Guti\'errez, and
-        and~M.~\'Alvarez-L\'opez% <-this % stops a space
+        and~M.~A.~\'Alvarez% <-this % stops a space
 \thanks{J. Gil-Gonz\'alez and A. Orozco are with the Faculty of Engineering, Universidad Tecnol\'ogica de Pereira, Colombia, 660003, e-mail:jugil@utp.edu.co}% <-this % stops a space
-\thanks{J. Giraldo and M. \'Alvarez are with Department of Computer Science, University of Sheffield, UK.}% <-this % stops a space
+\thanks{J. Giraldo and M. A.\'Alvarez are with Department of Computer Science, University of Sheffield, UK.}% <-this % stops a space
 \thanks{A. \'Alvarez is with  Universidad Nacional de Colombia sede Manizales, Colombia}}
 %\thanks{Manuscript received April 19, 2005; revised August 26, 2015.}}
 
@@ -282,7 +283,28 @@
 % As a general rule, do not put math, special symbols or citations
 % in the abstract or keywords.
 \begin{abstract}
-A dataset to train a supervised learning algorithm comprises features and their corresponding labels. The labeling process is usually carried out by an expert, which provides the ground truth/gold standard for each sample. However, in many real-world applications, instead of such a gold standard, we usually have access to annotations provided by crowds, which hold different and unknown expertise levels. Thus, \emph{learning from crowds} is an emerging area in the machine learning scenario, which has the main aim to face different machine learning paradigms in the presence of multi-labelers information. Most state-of-the-art approaches reside on two key assumptions: i) the labeler’s performance does not depend on the input feature space, and ii) independence among the annotators is imposed. To deal with multiple annotators' problems, we propose the chained Gaussian processes from multiple annotators--(CGPMA) that allow modeling each annotator's performance as a function of the input space. Likewise, to exploit correlations in multiple labelers' outputs, we propose the correlated chained Gaussian processes from multiple annotators--(CGPMA) as an extension of CGPMA. Experimental results associated with regression and classification tasks over synthetic and real annotators show that our CGPMA and CCGPMA achieve suitable performances from inconsistent labelers, even if the gold standard is not available.
+  A dataset to train a supervised learning algorithm comprises
+  features and their corresponding labels. The labeling process is
+  usually carried out by an expert, which provides the ground
+  truth/gold standard for each sample. However, in many real-world
+  applications, instead of such a gold standard, we usually have
+  access to annotations provided by crowds, which hold different and
+  unknown expertise levels. Thus, \emph{learning from crowds} is an
+  \comment{emerging area}{se puede considerar emergente todavia?} in the machine learning \comment{scenario}{field}, with the main
+  aim \comment{to face}{suena muy general, buscar un verbo mas especifico, to configure? to set? to accommodate?} different machine learning paradigms in the presence of
+  multi-labelers information. Most state-of-the-art approaches reside
+  on two key assumptions: i) the labeler’s performance does not depend
+  on the input feature space, and ii) independence among the
+  annotators is imposed. To deal with multiple annotators' problems,
+  we propose the chained Gaussian processes from multiple
+  annotators--(CGPMA) that allow modeling each annotator's performance
+  as a function of the input space. Likewise, to exploit correlations
+  in multiple labelers' outputs, we propose the correlated chained
+  Gaussian processes from multiple annotators--(CGPMA) as an extension
+  of CGPMA. Experimental results \comment{associated with}{for} regression and \comment{}{for}
+  classification tasks over synthetic and real annotators show that
+  our CGPMA and CCGPMA achieve suitable performances from inconsistent
+  labelers, even if the gold standard is not available.
 \end{abstract}
 
 % Note that keywords are not normally used for peerreview papers.
@@ -304,21 +326,172 @@ Multiple annotators, Chained Gaussian Processes, semi-parametric latent factor m
 
 \section{Introduction}
 
-\IEEEPARstart{S}{upervised} learning requires the acquisition of high-quality training sets. The labeling process is performed by a domain expert, which is supposed to provide the absolute true label (termed gold standard/ground truth) \citep{zhang2019crowdsourced}. However, the experts are scarce; their time is expensive; the labeling task is tedious and time-consuming. Therefore, the gold standard's availability is hardly feasible for many real-world applications \citep{liu2020truth}. An alternative is to distribute the labeling task to multiple heterogeneous annotators (also known as labelers or sources), where each labeler annotates part of the whole dataset by providing its version (possibly noisy) of the hidden ground truth \cite{kara2015modeling}. Those annotations can be collected in several ways. For instance, in \cite{raykar2010learning}, the sources are physicians who make a diagnosis about the presence of cancer, based on the analysis of medical images. Likewise, in \cite{zhu2019unsupervised}, the labelers are algorithms that measure the QT interval in an electrocardiogram (ECG) signal. Besides, crowdsourcing platforms such as Amazon Mechanical Turk (AMT)\footnote{https://www.mturk.com/} are becoming a valuable tool to obtain labels from multiple sources for large datasets in an efficient way (regarding labeling time). The attractiveness of these platforms lies in that at a low cost, it is possible to obtain suitable quality labels that, in some cases, can compete with those provided by experts~\cite{snow2008cheap}. 
+\IEEEPARstart{S}{upervised} learning requires the acquisition of
+high-quality training sets. The labeling process is performed by a
+domain expert, which is supposed to provide the absolute true label
+(termed gold standard/ground truth)
+\citep{zhang2019crowdsourced}. However, the experts are scarce; their
+time is expensive; the labeling task is tedious and
+time-consuming. Therefore, the gold standard's availability is hardly
+feasible for many real-world applications \citep{liu2020truth}. An
+alternative is to distribute the labeling task to multiple
+heterogeneous annotators (also known as labelers or sources), where
+each labeler annotates part of the whole dataset by providing its
+version (possibly noisy) of the hidden ground truth
+\cite{kara2015modeling}. Those annotations can be collected in several
+ways. For instance, in \cite{raykar2010learning}, the sources are
+physicians who make a diagnosis about the presence of cancer, based on
+the analysis of medical images. Likewise, in
+\cite{zhu2019unsupervised}, the labelers are algorithms that measure
+the QT interval in an electrocardiogram (ECG) signal. Besides,
+crowdsourcing platforms such as Amazon Mechanical Turk
+(AMT)\footnote{https://www.mturk.com/} are \comment{becoming}{yo creo que AMT ya esta establecido, depronto hace 5 a\~nos decir becoming estaba bien} a valuable tool to
+obtain labels from multiple sources for large datasets in an efficient
+way (regarding labeling time). The attractiveness of these platforms
+lies in that at a low cost, it is possible to obtain suitable quality
+labels that, in some cases, can compete with those provided by
+experts~\cite{snow2008cheap}.
 
-Accordingly, unlike typical supervised learning (where a label is assigned to each input), in a multi-labeler setting, each input instance is matched with multiple annotations provided by different sources with unknown and diverse expertise. Thus, it is clear that such a problem cannot be faced with traditional supervised learning algorithms \cite{tao2018domain,wang2016bi}. Taking the above into account, the question is how to perform predictions with information from multiple annotators? Such a question has been addressed by an area named \emph{Learning from crowds}, which is undergoing intense study in the machine learning context \cite{groot2011learning}. \emph{Learning from crowds} offers two options to deal with multi-labeler problems data: \textit{i)} to adapt the labels from multiple annotators or \textit{ii)} to adapt the supervised learning algorithms~\cite{rizos2020average}. 
+Accordingly, unlike typical supervised learning (where a label is
+assigned to each input), in a multi-labeler setting, each input
+instance is matched with multiple annotations provided by different
+sources with unknown and diverse expertise. Thus, it is clear that
+such a problem cannot be faced with traditional supervised learning
+algorithms \cite{tao2018domain,wang2016bi}. Taking the above into
+account, the question is how to perform predictions with information
+from multiple annotators. Such a question has been addressed by an
+area named \emph{learning from crowds}, which is undergoing intense
+study in the machine learning context
+\cite{groot2011learning}. \emph{Learning from crowds} offers two
+options to deal with multi-labeler problems data: \textit{i)} to adapt
+the labels from multiple annotators or \textit{ii)} to adapt the
+supervised learning algorithms~\cite{rizos2020average}.
 
-The first approach is known in the literature as ``Label aggregation'' or ``Truth inference''. It comprises the computation of a single hard label per sample as an estimation of the unknown ground truth. These hard labels are then used to feed a standard supervised learning algorithm~\cite{morales2019scalable}. The most straightforward approach is the so-called majority voting--(MV); it has been used in different multi-labeler problems due to its simplicity~\cite{zhang2014imbalanced}. However, MV assumes homogeneity in annotators' reliability, which is hardly feasible in real applications, e.g., experts vs. spammers. Furthermore, the consensus is profoundly impacted by incorrect labels and outliers~\cite{kara2015modeling}. Conversely, more elaborated models have been considered to improve the estimation of the correct tag. For example, authors in \cite{dawid1979maximum} use an Expectation-Maximization (EM) algorithm to compute each labeler's reliability and infer the ground truth models. Besides, the work in \cite{zhang2014imbalanced} gives an estimation of the actual label by facing the problem of imbalanced labeling.  
+The first approach is known in the literature as ``label aggregation''
+or ``truth inference''. It comprises the computation of a single hard
+label per sample as an estimation of the unknown ground truth. These
+hard labels are then used to feed a standard supervised learning
+algorithm~\cite{morales2019scalable}. The most straightforward
+approach is the so-called majority voting--(MV); it has been used in
+different multi-labeler problems due to its
+simplicity~\cite{zhang2014imbalanced}. However, MV assumes homogeneity
+in annotators' reliability, which is hardly feasible in real
+applications, e.g., experts vs. spammers. Furthermore, the consensus
+is profoundly impacted by incorrect labels and
+outliers~\cite{kara2015modeling}. Conversely, more elaborated models
+have been considered to improve the estimation of the correct tag. For
+example, authors in \cite{dawid1979maximum} use an
+Expectation-Maximization (EM) algorithm to compute each labeler's
+reliability and infer the ground truth models. Besides, the work in
+\cite{zhang2014imbalanced} gives an estimation of the actual label by
+facing the problem of imbalanced labeling.
 
-The second approach comprises the modification of supervised learning algorithms to jointly train the supervised learning algorithm and the annotators' behavior. It has been shown that such strategies lead to better performance compared to the ones belonging to label aggregation. Thus, the features used to train the learning algorithm provide valuable information to puzzle out the ground truth~\cite{ruiz2019learning}. The most representative work in this area is the exposed in \cite{raykar2010learning}, which offers an EM-based framework to learn the parameters of a logistic regression classifier and model the annotators' behavior by computing their sensitivities and specificities. This work has inspired several models in the context of multi-labelers scenarios. For instance, for binary classification \cite{rodrigues2014gaussian,ruiz2019learning}, multi-class classification \cite{morales2019scalable,gonzalez2015automatic}, regression \cite{groot2011learning,rodrigues2017learning}, and sequence labeling~\cite{rodrigues2014sequence}. Furthermore, in the last years, some works have addressed the multi-labeler problem using deep learning approaches \cite{albarqouni2016aggnet,rodrigues2018deep,guan2018said}. Chiefly, the idea of this kind of approach is to design an extra layer to code multiple annotators' information. 
+The second approach comprises the modification of supervised learning
+algorithms to jointly train the supervised learning algorithm and the
+annotators' behavior. It has been shown that such strategies lead to
+better performance compared to the ones belonging to label
+aggregation. Thus, the features used to train the learning algorithm
+provide valuable information to puzzle out the ground
+truth~\cite{ruiz2019learning}. The most representative work in this
+area is the exposed in \cite{raykar2010learning}, which offers an
+EM-based framework to learn the parameters of a logistic regression
+classifier and model the annotators' behavior by computing their
+sensitivities and specificities. This work has inspired several models
+in the context of multi-labelers scenarios. For instance, for binary
+classification \cite{rodrigues2014gaussian,ruiz2019learning},
+multi-class classification
+\cite{morales2019scalable,gonzalez2015automatic}, regression
+\cite{groot2011learning,rodrigues2017learning}, and sequence
+labeling~\cite{rodrigues2014sequence}. Furthermore, in the last years,
+some works have addressed the multi-labeler problem using deep
+learning approaches
+\cite{albarqouni2016aggnet,rodrigues2018deep,guan2018said}. Mainly,
+the idea of this kind of approach is to design an extra layer to code
+multiple annotators' information.
 
-From the above, we can note an increasing interest in developing algorithms to deal with data from multiple labelers. Although, as it was analyzed in \cite{g2019machine}, there exist some problems that are not entirely solved; specifically, we are interested in the two following: \textit{i)} to code the relationship between the input features and the labelers' behavior, and \textit{ii)} to reveal the annotators' interdependencies. Regarding the first assumption, to model the annotators' behavior, it is necessary to learn some parameters related to their performance. Such parameters include the accuracy \cite{rodrigues2013learning}, the confusion matrix \cite{gonzalez2015automatic}, the error variance \cite{raykar2010learning}, and the bias \cite{rodrigues2017learning}. In the literature, we commonly find that the parameters are modeled as fixed points \cite{rodrigues2014gaussian} or as random variables \cite{morales2019scalable}, where it is considered that such parameters are homogeneous across the input data. The latter assumption is not correct since an expert makes decisions based not only on his/her expertise but also on the features observed from raw data \cite{raykar2010learning}. For the second assumption, it is widespread to consider independence in the annotators' labels, aiming to reduce the complexity of the model~\cite{venanzi2014community}, or based on the fact that it is plausible to guarantee that each labeler performs the annotation process individually~\cite{tang2019leveraging}. However, this assumption is not entirely true since there may exist correlations among the annotators \cite{zhang2011learning}. For example, if the sources are humans, the independence assumption is hardly feasible because knowledge is a social construction; then, people's decisions will be correlated since they share information, communicate with each other, or belong to a particular school of thought~\cite{surowiecki2005wisdom,hahn2018communication}. On the other hand, if we consider that the sources are algorithms, where some of them gather the same math principle, there likely exists a correlation in their labels~\cite{zhu2019unsupervised}. Therefore, the relaxation of this restriction can improve the ground truth estimation~\cite{g2019machine}.
+From the above, we can note an increasing interest in developing
+algorithms to deal with data from multiple labelers. Although, as it
+was analyzed in \cite{g2019machine}, there exist some problems that
+are not entirely solved; specifically, we are interested in the two
+following: \textit{i)} to code the relationship between the input
+features and the labelers' behavior, and \textit{ii)} to reveal the
+annotators' interdependencies. Regarding the first assumption, to
+model the annotators' behavior, it is necessary to learn some
+parameters related to their performance. Such parameters include the
+accuracy \cite{rodrigues2013learning}, the confusion matrix
+\cite{gonzalez2015automatic}, the error variance
+\cite{raykar2010learning}, and the bias
+\cite{rodrigues2017learning}. In the literature, we commonly find that
+the parameters are modeled as fixed points
+\cite{rodrigues2014gaussian} or as random variables
+\cite{morales2019scalable}, where it is considered that such
+parameters are homogeneous across the input data. \comment{The latter
+assumption is not correct since an expert makes decisions based not
+only on his/her expertise but also on the features observed from raw
+data \cite{raykar2010learning}}{me parece que esto deberia aparecer mas cerca cuando se habla del first assumption, se demora mucho en aparecer, cuando es un argumento muy fuerte sobre porque se necesita este modelo}. For the second assumption, it is
+widespread to consider independence in the annotators' labels, aiming
+to reduce the complexity of the model~\cite{venanzi2014community}, or
+based on the fact that it is plausible to guarantee that each labeler
+performs the annotation process
+individually~\cite{tang2019leveraging}. However, this assumption is
+not entirely true since there may exist correlations among the
+annotators \cite{zhang2011learning}. For example, if the sources are
+humans, the independence assumption is hardly feasible because
+knowledge is a social construction; then, people's decisions will be
+correlated since they share information, communicate with each other,
+or belong to a particular school of
+thought~\cite{surowiecki2005wisdom,hahn2018communication}. On the
+other hand, if we consider that the sources are algorithms, where some
+of them gather the same math principle, there likely exists a
+correlation in their labels~\cite{zhu2019unsupervised}. Therefore, the
+relaxation of this restriction can improve the ground truth
+estimation~\cite{g2019machine}.
 
-In this work we propose a probabilistic framework based on Gaussian Processes--(GPs) to jointly build a prediction algorithm applicable to regression and classification tasks and model the labelers' behavior as a function of the input features and taking into account annotators' interdependencies.\\
-We perform an initial approach by applying the Chained GPs--(CGP) \cite{saul2016chained} model to the prediction problem with multiple annotators. CGPs are a Multi-GPs framework, where the parameters of an arbitrary likelihood function are modeled with multiple independent GPs (one GP prior per parameter). From the multiple annotators' point of view, the likelihood's parameters are related to the labelers' behavior. Hence, by using CGPs for multiple annotators (CGPMA), we are modeling each annotator's performance as a function of the input; however, due to CGP uses independent GPs, the modeling of dependencies (or correlation) among individual labelers is missing.\\
-Hence, aiming to model such labelers' interdependencies, we introduce an extension to the CGPs named Correlated Chained GP for multiple annotators--(CCGPMA), which induces correlations between multiple GPs that model the likelihood's parameters. To this end, we take as a basis the ideas from a Multi-output GP--(MOGP) regression \cite{alvarez2012kernels}, where each output is coded as a weighted sum of shared latent functions via a semi-parametric latent factor model (SLFM) \cite{teh2005semiparametric}. In contrast to a MOGP model, we do not have multiple outputs but multiple functions chained to the parameters of a given likelihood. Hence, to model the correlations in the parameters' functions, we suppose them to be generated from an SLFM of $Q$ latent functions, where each hidden function obeys a GP; thus, we are modeling the labelers' performance by taking into account interdependencies in their outputs. The formulation of our CCGPs is based on the so-called inducing variables framework \cite{alvarez2010efficient} in combination with stochastic variational inference \cite{hoffman2013stochastic}, which make them scalable to large datasets. To the best of our knowledge, this is the first attempt to build a probabilistic approach that models both the interdependencies in the annotators and the relationship between the input features and the labelers' performance. Our experimental results, using both simulated and real-world annotators, show how our methodology can deal with both regression and classification problems from multi-labelers data, outperforming state-of-the-art techniques.
+In this work we propose a probabilistic framework based on Gaussian
+Processes--(GPs) to jointly build a prediction algorithm applicable to
+regression and classification tasks and model the labelers' behavior
+as a function of the input features \comment{and}{while also} taking
+into account annotators' interdependencies.\\
+We \comment{perform}{propose} an initial approach \comment{by
+  applying}{based on} the Chained GPs--(CGP) \cite{saul2016chained}
+\comment{}{to} model \comment{to}{remove to} the prediction problem
+with multiple annotators. CGPs are a Multi-GPs framework, where the
+parameters of an arbitrary likelihood function are modeled with
+multiple independent GPs (one GP prior per parameter). From the
+multiple annotators' point of view, the likelihood's parameters are
+related to the labelers' behavior. Hence, by using CGPs for multiple
+annotators (CGPMA), we are modeling each annotator's performance as a
+function of the input; however, due to CGP uses independent GPs, the
+modeling of dependencies (or correlation) among individual labelers is
+missing.\\ Hence, aiming to model such labelers' interdependencies, we
+introduce an extension to the CGPs named Correlated Chained GP for
+multiple annotators--(CCGPMA), which induces correlations between
+multiple GPs that model the likelihood's parameters. To this end, we
+take as a basis the ideas from a Multi-output GP--(MOGP) regression
+\cite{alvarez2012kernels}, where each output is coded as a weighted
+sum of shared latent functions via a semi-parametric latent factor
+model (SLFM) \cite{teh2005semiparametric}. In contrast to a MOGP
+model, we do not have multiple outputs but multiple functions chained
+to the parameters of a given likelihood. \comment{Hence}{Hence ya se ha usado varias veces, tal vez sea mejor decir, Therefore}, to model the
+correlations in the parameters' functions, we suppose them to be
+generated from an SLFM of $Q$ latent functions, where each hidden
+function \comment{obeys}{follows} a GP; thus, we are modeling the labelers' performance
+by taking into account interdependencies in their outputs. The
+formulation of our CCGPs is based on the so-called inducing variables
+framework \cite{alvarez2010efficient} in combination with stochastic
+variational inference \cite{hoffman2013stochastic}, which make them
+scalable to large datasets. To the best of our knowledge, this is the
+first attempt to build a probabilistic approach that models \comment{both the
+interdependencies in the annotators and the relationship between the
+input features and the labelers' performance}{depronto cambiar el ordern porque el segundo elemento es el primer modelo, no?}. Our experimental
+results, using both simulated and real-world annotators, show how our
+methodology can deal with both regression and classification problems
+from multi-labelers data, outperforming state-of-the-art techniques.
 
-The remainder is organized as follows. Section 2 exposes the related work and main contributions of the proposal. Section 3 describes the methods. Sections 4 and 5 present the experiments and discuss the results. Finally, Section 6 outlines the conclusions and future work.
+The remainder is organized as follows. Section 2 exposes the related
+work and main contributions of the proposal. Section 3 describes the
+methods. Sections 4 and 5 present the experiments and discuss the
+results. Finally, Section 6 outlines the conclusions and future work.
 
 \section{Related work and main contributions}
 
@@ -328,14 +501,112 @@ The remainder is organized as follows. Section 2 exposes the related work and ma
 
 % Regarding the second approach, it comprises the modification of supervised learning algorithms to jointly learn the classifier (regressor) parameters and the annotators' behavior. It has been shown that such strategies lead to better performance compared to the ones belonging to Label aggregation. Namely, the features used to train the learning algorithm provides valuable information to puzzle out the ground truth~\cite{ruiz2019learning}. The most representative work in this area is the exposed in \cite{raykar2010learning}, which offers an EM-based framework to learn the parameters of a logistic regression classifier and to model the annotators' behavior by computing their sensitivities and specificities. This work has inspired several models in the context of multi-labelers scenarios. For instance, for binary classification, authors in \cite{rodrigues2014gaussian} offer an extension based on Gaussian processes (GP) with Expectation-Propagation (EP) inference to deal with non-linearly separable data. Authors in \cite{ruiz2019learning} uses a GP classifier to learn the annotators' parameters using variational inference. Similarly, in \cite{morales2019scalable}, a sparse approximation of the previous model is introduced to make it scalable to large datasets. Conversely, the early work in \cite{raykar2010learning} has been extended to other supervised learning paradigms such as multi-class classification \cite{morales2019scalable,gonzalez2015automatic}, and regression \cite{groot2011learning,rodrigues2017learning}. Furthermore, in the last years, some works have faced the multi-labeler problem using deep learning \cite{albarqouni2016aggnet,rodrigues2018deep,guan2018said}. Chiefly, the idea of this kind of approach is to design an extra layer to code the information of multiple annotators. 
 
-We note an increasing interest in developing algorithms to deal with data from multiple labelers. Though, as it was analyzed in \cite{g2019machine}, there exist some problems that are not entirely solved: \textit{i)} to code the relationship between the input features and the labelers' behavior, and \textit{ii)} to reveal the annotators' interdependencies. 
+\comment{We note an increasing interest in developing algorithms to deal with
+data from multiple labelers. Though, as it was analyzed in
+\cite{g2019machine}, there exist some problems that are not entirely
+solved: \textit{i)} to code the relationship between the input
+features and the labelers' behavior, and \textit{ii)} to reveal the
+annotators' interdependencies.}{Este texto no es el mismo de antes? depronto mirar como se resume o se dice con otras palabras}
 
-First, aiming to model the annotators' behavior, it is necessary to learn some parameters related to their performance. Such parameters include the accuracy \cite{rodrigues2013learning}, the confusion matrix \cite{gonzalez2015automatic}, the error variance \cite{raykar2010learning}, and the bias \cite{rodrigues2017learning}. In the literature, it is commonly found that the parameters are modeled as fixed points \cite{rodrigues2014gaussian} or as random variables \cite{morales2019scalable}, where it is considered that such parameters are homogeneous across the input data. The latter assumption is wrong since an expert makes decisions based not only on his/her expertise but also on the features observed from raw data \cite{raykar2010learning}. The first attempt to analyze the relationship between the annotators' parameters and the input features is the work in \cite{zhang2011learning}. The authors propose an approach for binary classification with multiple labelers, where the input data is represented by some clusters using a Gaussian Mixtures Model--(GMM). Then, they assumed that for each cluster, the annotators exhibit a particular performance measured in terms of sensitivity and specificity. However, this labelers' model is not adequate because they do not consider the information from multiple experts as an input for the GMM, which could generate some regions where the labelers' parameters may vary. In \cite{yan2014learning}, the authors propose a binary classification algorithm that employs two approaches to code the annotators' performance as a function of the input space: a Bernoulli and a Gaussian distribution. The parameters of these distributions are computing via a Logistic regression scheme. Nonetheless, they assume a linear dependence between the labeler expertise and the input space, which may not be appropriate because of nonlinearities in the data structure. For example, if we consider online annotators assessing some documents, they may have different labeling accuracy. Such differences may rely on whether they are more familiar with some issues than other \cite{wang2016bi}, which configures nonlinear behavior. Finally, \cite{xiao2013learning} offers a GP-based regression scheme with multiple annotators. An additional GP is included to model the annotators' parameters as a nonlinear function of the input space. Nevertheless, such a model does not consider the uncertainty in the parameters \cite{bishop2006pattern}.
+\comment{First, aiming to model the annotators' behavior, it is
+  necessary to learn some parameters related to their
+  performance. Such parameters include the accuracy
+  \cite{rodrigues2013learning}, the confusion matrix
+  \cite{gonzalez2015automatic}, the error variance
+  \cite{raykar2010learning}, and the bias
+  \cite{rodrigues2017learning}. In the literature, it is commonly
+  found that the parameters are modeled as fixed points
+  \cite{rodrigues2014gaussian} or as random variables
+  \cite{morales2019scalable}, where it is considered that such
+  parameters are homogeneous across the input data. The latter
+  assumption is wrong since an expert makes decisions based not only
+  on his/her expertise but also on the features observed from raw data
+  \cite{raykar2010learning}.  }{Este texto tambien es muy similar al
+  que aparece en la introduccion, creo que es mejor modificarlo un
+  poco} The first attempt to analyze the relationship between the
+annotators' parameters and the input features is the work in
+\cite{zhang2011learning}. The authors propose an approach for binary
+classification with multiple labelers, where the input data is
+represented by some clusters using a Gaussian Mixture
+Model--(GMM). Then, they assumed that for each cluster, the annotators
+exhibit a particular performance measured in terms of sensitivity and
+specificity. However, this labelers' model is not adequate because
+they do not consider the information from multiple experts as an input
+for the GMM, which could generate some regions where the labelers'
+parameters may vary. In \cite{yan2014learning}, the authors propose a
+binary classification algorithm that employs two approaches to code
+the annotators' performance as a function of the input space: a
+Bernoulli and a Gaussian distribution. The parameters of these
+distributions are \comment{computing}{computed?} via a Logistic regression
+\comment{scheme}{model?}. Nonetheless, they assume a linear dependence between the
+labeler expertise and the input space, which may not be appropriate
+because of nonlinearities in the data structure. For example, if we
+consider online annotators assessing some documents, they may have
+different labeling accuracy. Such differences may rely on whether they
+are more familiar with some issues than other \cite{wang2016bi}, which
+configures nonlinear behavior. Finally, \cite{xiao2013learning} offers
+a GP-based regression scheme with multiple annotators. \comment{An additional
+GP is included to model the annotators' parameters as a nonlinear
+function of the input space. Nevertheless, such a model does not
+consider the uncertainty in the parameters \cite{bishop2006pattern}.}{y el modelo de nosotros si considera la incertidumbre?}
 
-Now, the annotators' independence is commonly assumed to reduce the complexity of the model \cite{venanzi2014community}, or based on the fact that it is plausible to guarantee that each labeler performs the annotation process individually \cite{tang2019leveraging}. Nevertheless, this is not entirely correct due to there may exist correlations among the annotators \cite{zhang2011learning}. For example, if the sources are humans, the independence assumption is hardly feasible because knowledge is a social construction; hence, people's decisions will be correlated when they share information, communicate with each other, or belong to a particular school of thought \cite{surowiecki2005wisdom,hahn2018communication}. In this sense, the relaxation of this restriction could be used to improve the ground truth estimation \cite{g2019machine}. To the best of our knowledge, only two works gather the dependencies among the labelers. First, authors in \cite{zhu2019unsupervised} expose an approach to deal with regression problems, where the labelers' behavior is addressed using a multivariate Gaussian distribution. Thus, the annotators' interdependencies are coded in the covariance matrix.  In \cite{gil2018learning}, authors propose a binary classification approach based on a weighted combination of classifiers, where each classifier models each annotator's response. In turn, the weights are estimated by using a kernel alignment-based approach considering dependencies among the labelers. 
+Now, the annotators' independence is commonly assumed to reduce the
+complexity of the model \cite{venanzi2014community}, or based on the
+fact that it is plausible to guarantee that each labeler performs the
+annotation process individually
+\cite{tang2019leveraging}. Nevertheless, this is not entirely correct
+due to there may exist correlations among the annotators
+\cite{zhang2011learning}. \comment{For example, if the sources are
+  humans, the independence assumption is hardly feasible because
+  knowledge is a social construction; hence, people's decisions will
+  be correlated when they share information, communicate with each
+  other, or belong to a particular school of thought
+  \cite{surowiecki2005wisdom,hahn2018communication}.}{de nuevo, es el
+  mismo texto de la Intro, depronto se puede modificar un poco?} In
+this sense, the relaxation of this restriction could be used to
+improve the ground truth estimation \cite{g2019machine}. To the best
+of our knowledge, only two works \comment{gather}{address} the dependencies among the
+labelers. First, \comment{}{the} authors in \cite{zhu2019unsupervised} \comment{expose}{describe} an
+approach to deal with regression problems, where the labelers'
+behavior is \comment{addressed}{modelled?} using a multivariate Gaussian
+distribution. Thus, the annotators' interdependencies are coded in the
+covariance matrix.  In \cite{gil2018learning}, \comment{}{the} authors propose a
+binary classification approach based on a weighted combination of
+classifiers, where each classifier models each annotator's
+response. In turn, the weights are estimated by using a kernel
+alignment-based approach considering dependencies among the labelers.
 
-According to the related previously, we propose a framework based on GPs to face classification and regression settings with multiple annotators. Our proposal follows the line of the works in \cite{rodrigues2014gaussian,groot2011learning,ruiz2019learning,morales2019scalable,morales2019scalable1} in the sense that we are modeling the unknown ground truth trough a GP prior. However, while such approaches code the annotators' parameters as fixed points \cite{rodrigues2014gaussian,groot2011learning} or as random variables \cite{ruiz2019learning,morales2019scalable,morales2019scalable1}; we model them as random processes (GPs) aiming to take into account dependencies between the input space and the labelers' behavior. On the other hand, our CGPMA and CCGPMA share some similarities  \cite{yan2014learning,xiao2013learning}, due to these works assume dependencies between the input features and the labelers' performance. Besides, our CCGPMA is similar to approaches in \cite{zhu2019unsupervised,gil2018learning} because they assume the existence of dependencies in the annotators labels'.
-Nonetheless, in contrast to these approaches, our CCGPMA is the only approach that includes such assumptions to code the annotators' behavior. Finally, We highlight that due to our approach is capable to model inconsistent annotators, it is more robust to outliers compared with such models that do not consider the relationship between the input features and the labelers' behavior. Namely, CCGPMA can estimate the annotators' performance for every region in the input space; meanwhile, the other approaches estimate such performance as an average of some parameters \cite{rodrigues2017learning,morales2019scalable,ruiz2019learning}. Consequently, it is known that the average operator suffers under the presence of outliers \cite{kara2015modeling}. \cref{tab:SOA} summarizes the similarities and differences among our CGPMA, CCGPMA, and state-of-the-art approaches.
+\comment{According to the related previously, we}{In this paper, we}
+propose a framework based on GPs to face classification and regression
+settings with multiple annotators. Our proposal follows the line of
+the works in
+\cite{rodrigues2014gaussian,groot2011learning,ruiz2019learning,morales2019scalable,morales2019scalable1}
+in the sense that we are modeling the unknown ground truth trough a GP
+prior. However, while such approaches code the annotators' parameters
+as fixed points \cite{rodrigues2014gaussian,groot2011learning} or as
+random variables
+\cite{ruiz2019learning,morales2019scalable,morales2019scalable1}; we
+model them as random processes (GPs) aiming to take into account
+dependencies between the input space and the labelers' behavior. On
+the other hand, our CGPMA and CCGPMA share some similarities
+\comment{}{with} \cite{yan2014learning,xiao2013learning}, \comment{due to}{since} these
+works assume dependencies between the input features and the labelers'
+performance. Besides, our CCGPMA is similar to approaches in
+\cite{zhu2019unsupervised,gil2018learning} because they assume the
+existence of dependencies in the annotators labels'.  Nonetheless, in
+contrast to these approaches, our CCGPMA is the only approach that
+includes such assumptions to code the annotators' behavior. Finally,
+\comment{We}{we} highlight that due to our approach is capable to model inconsistent
+annotators, it is more robust to outliers compared with such models
+that do not consider the relationship between the input features and
+the labelers' behavior. Namely, CCGPMA can estimate the annotators'
+performance for every region in the input space; meanwhile, the other
+approaches estimate such performance as an average of some parameters
+\cite{rodrigues2017learning,morales2019scalable,ruiz2019learning}. \comment{Consequently}{esta transicion no me cuadra},
+it is known that the average operator suffers under the presence of
+outliers \cite{kara2015modeling}. \cref{tab:SOA} summarizes the
+similarities and differences among our CGPMA, CCGPMA, and
+state-of-the-art approaches.
 
 \begin{table*}[!tb]
 	\centering
@@ -370,9 +641,9 @@ Commonly, each $\ve{x}_n$ is assigned to a single $y_n$, i.e., the ground truth.
  
 \subsection{Chained Gaussian Processes for multiple annotators--(CGPMA)}\label{sec:CGP}
 
-To full-fill the issues above, we introduce a GP-based framework. First, we propose a CGPMA approach, which uses various independent GPs to model the parameters of a given multi-labeler likelihood. Such parameters are related to the unknown gold standard and the annotators' performance. Accordingly, our CGPMA estimates the unknown ground truth, assesses the labelers' performance as a function of the input features, and builds a supervised algorithm to make predictions on new data. 
+\comment{}{Antes de comenzar con esta seccion, no deberia haber una peque\~na introduccion a GPs? Que es un GP? Tambien me parece que esta seccion esta escrita muy a la carrera para un experto en GPs y no se conecta muy bien lo que bien describiendo sobre los anotadores y el uso de GPs. En ultimas, el problema de inferencia variacional es secundario, y la mayoria de lo que aparece relacionado incluso se puede enviar para apendices. Lo que es realmente importante aca es como usa el chained GP para darle respuesta a la pregunta de como los anotadores usan la entrada. Por ejemplo, no se si sea pertinente incluir el toy example aca, una vez haya includo la parte matematica. Esta forma de presentar el paper puede ser mas pedagogica.} To full-fill the issues above, we introduce a GP-based framework. First, we propose a CGPMA approach, which uses various independent GPs to model the parameters of a given multi-labeler likelihood. Such parameters are related to the unknown gold standard and the annotators' performance. Accordingly, our CGPMA estimates the unknown ground truth, assesses the labelers' performance as a function of the input features, and builds a supervised algorithm to make predictions on new data. 
 
-Let $\mathcal{D}$ be a multi-labeler annotator dataset; our CGPMA relies on estimating the following joint distribution (from multiple independent GPs priors):
+\comment{Let $\mathcal{D}$ be a multi-labeler annotator dataset;}{me parece que en lo que sigue debe relacionarse mejor el parametro $J$ con el numero de anotadores $R$, cual es la relacion? Ud puede ambientar de una vez los dos casos, el de regresion y el de clasificacion binaria, y en ambos decir que $J=R$, cierto?} our CGPMA relies on estimating the following joint distribution (from multiple independent GPs priors):
 \begin{align}
 \notag p(\mat{Y},{\ve{f}}|\mat{X}) &= p(\mat{Y}|{\bm{\theta}})p({\ve{f}}|\mat{X}),\\
 &= p(\mat{Y}|{\bm{\theta}})\prod_{j=1}^{J}\gauss(\ve{f}_j|\ve{0}, \mat{K}_{\ve{f}_j\ve{f}_j}),
@@ -396,15 +667,16 @@ p(\ve{f}_j|\ve{u}_j) =&\gauss\left(\ve{f}_j|\mat{K}_{\ve{f}_j\ve{u}_j}\mat{K}_{\
 p(\ve{u}_j) =& \gauss\left(\ve{u}_j|\ve{0}, \mat{K}_{\ve{u}_j\ve{u}_j}\right).
 \label{eq:U}
 \end{align}
-Given that \cref{eq:FgU,eq:U} in most of the cases are non-conjugate to the likelihood, finding the posterior distribution $p({\ve{f}},\mathbf{u}|\mathbf{Y})$ is not tractable analytically; therefore, a variational approximation is required. Let $p(\mat{Y},{\ve{f}},{\ve{u}})$ be a joint distribution with likelihood function $\prod_{n=1}^{N}p(\ve{y}_n|\bm{\theta})$ ($\ve{y}_n\in \mathcal{Y}^{|R_n|}$ holds the labels given for the $n$-th instance, with $|\cdot|$ indicating the set cardinality) and an augmented prior:
+Given that \cref{eq:FgU,eq:U} in most of the cases are non-conjugate to the likelihood, finding the posterior distribution $p({\ve{f}},\mathbf{u}|\mathbf{Y})$ is not tractable analytically; \comment{therefore, a variational approximation is required}{me parece que esto se debe decir de otra forma, porque no es cierto que la inferencia variacional es la unica forma de hacer esto. Decir algo como, ``Since computing the posterior distribution is not possible in closed form, we resort to a deterministic approximation of the posterior distribution that we compute using variational inference.''}. Let $p(\mat{Y},{\ve{f}},{\ve{u}})$ be a joint distribution with likelihood function $\prod_{n=1}^{N}p(\ve{y}_n|\bm{\theta})$ ($\ve{y}_n\in \mathcal{Y}^{|R_n|}$ holds the labels given for the $n$-th instance, with $|\cdot|$ indicating the set cardinality) and an augmented prior:
 \begin{align}
 \label{eq:CGPpri}
 p({\ve{f}}, {\ve{u}}) = \prod_{j=1}^{J}p(\ve{f}_j|\ve{u}_j)p(\ve{u}_j),
 \end{align}
-where ${\ve{u}}\igual \left[\ve{u}_1^{\top},\dots, \ve{u}_J^{\top}\right]^{\top}\en \Real^{MJ}$ stores the inducing variables. The actual posterior can be approximated by a parametrized variational $p({\ve{f}},{\ve{u}}|\mat{Y})\s{\approx} q({\ve{f}},{\ve{u}})$, as:
+where ${\ve{u}}\igual \left[\ve{u}_1^{\top},\dots, \ve{u}_J^{\top}\right]^{\top}\en \Real^{MJ}$ stores the inducing variables. The actual posterior can be approximated by a parametrized variational distribution $p({\ve{f}},{\ve{u}}|\mat{Y})\s{\approx} q({\ve{f}},{\ve{u}})$, as:
 \begin{align}
 q({\ve{f}},{\ve{u}}) = p({\ve{f}}|{\ve{u}})q({\ve{u}})= \prod_{j=1}^{J}p(\ve{f}_j|\ve{u}_j)q(\ve{u}_j),
 \end{align}
+\comment{}{La aproximacion anterior es muy conocida en la literature de GPs, pero creo que un revisor que no este familizarido con GPs no va a entender porque se escoger esta aproximacion. Aca seria bueno decir que esta aproximacion se ha usado en otros trabajos y cita el paper de chained GPs y el de Pablo Moreno-Munoz sobre Heterogeneous multi-output GPs, que a proposito no lo he visto citado hasta ahora}
 where $p(\ve{f}_j|\ve{u}_j)$ is defined in \cref{eq:FgU}, and $q({\ve{u}})$ is the posterior approximation over the inducing variables:
 \begin{align}
 \label{eq:QU}
@@ -427,7 +699,7 @@ Solving \cref{eq:PostVar}, we have
 \notag q(\ve{f}_j) &= \gauss(\ve{f}_j|\mat{K}_{\ve{f}_j\ve{u}_j}\mat{K}_{\ve{u}_j\ve{u}_j}^{-1}\ve{m}_j, \mat{K}_{\ve{f}_j\ve{f}_j} + \cdots \\
 &\cdots + \mat{K}_{\ve{f}_j\ve{u}_j}\mat{K}_{\ve{u}_j\ve{u}_j}^{-1}(\mat{V}_j\!-\!\mat{K}_{\ve{u}_j\ve{u}_j})\mat{K}_{\ve{u}_j\ve{u}_j}^{-1}\mat{K}_{\ve{u}_j\ve{f}_j}).
 \end{align}
-Yet, the computation of the variational expectations in \cref{eq:LowBound21} are intractable, due to for many likelihood functions, such expectations cannot be solved analytically~\cite{saul2016chained,moreno2018heterogeneous}. Therefore, aiming to model different data types, i.e., classification and regression tasks, we need to find a generic alternative to solve the integrals related to these expectations. In that sense, we use the Gaussian-Hermite quadratures approach as in~\cite{hensman2015scalable,saul2016chained}. 
+Yet, the computation of the variational expectations in \cref{eq:LowBound21} are intractable, due to for many likelihood functions, such expectations cannot be solved analytically~\cite{saul2016chained,moreno2018heterogeneous}. \comment{Therefore, aiming to model different data types, i.e., classification and regression tasks, we need to find a generic alternative to solve the integrals related to these expectations. In that sense, we use the Gaussian-Hermite quadratures approach as in~\cite{hensman2015scalable,saul2016chained}.}{ojo que la ecuacion si se puede resolver de forma exacta en el caso de regression Gaussiana. Para verosimilitudes no Gaussianas si es cierto que se necesita alguna aproximacion} 
 
 \subsection{Correlated Chained Gaussian Processes for multiple  annotators-(CCGPMA)} 
 
